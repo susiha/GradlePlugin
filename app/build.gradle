@@ -1,0 +1,136 @@
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.0"
+    testBuildType 'debug'
+
+    signingConfigs{
+        a{
+            storeFile file('astrore.jks')
+            storePassword '123456'
+            keyAlias 'keya'
+            keyPassword '123456'
+        }
+    }
+
+    compileOptions{
+        encoding = 'utf-8'
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
+
+    }
+
+
+    adbOptions{
+
+        timeOutInMs = 5*1000
+        installOptions '-r','-s'
+
+    }
+
+    dexOptions{
+
+
+    }
+
+    defaultConfig {
+        applicationId "com.susiha.gradleplugin"
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testApplicationId 'com.susiha.gradleplugin.test'
+        testFunctionalTest true
+        testHandleProfiling true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.a
+        flavorDimensions "default"
+        resConfigs 'zh','hdpi'
+    }
+
+
+    productFlavors{
+        salty{
+            versionCode 2
+            versionName "1.0.soat"
+            buildConfigField 'String','flavor',"\"$name\""
+            manifestPlaceholders.put("flavor",name)
+
+        }
+        sweet{
+            versionCode 3
+            versionName "1.0.sweet"
+            buildConfigField 'String','flavor',"\"$name\""
+            manifestPlaceholders.put("flavor",name)
+        }
+    }
+
+    buildTypes {
+        release {
+            buildConfigField 'String','buildType',"\"$name\""
+            manifestPlaceholders.put("buildType",name)
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            manifestPlaceholders.put("buildType",name)
+
+            buildConfigField 'String','buildType',"\"$name\""
+            applicationIdSuffix '.debug'
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            multiDexEnabled true
+            proguardFile 'proguard-rules.pro'
+        }
+
+    }
+
+    applicationVariants.all{
+        variant ->
+            println '---------分割线-------------'
+            println "variantData ApplicationVariantImpl类的变量：${variant.variantData}"
+            println "install InstallableVariantImpl类的变量:${variant.install}"
+            println "signingConfig AndroidArtifactVariantImpl类的变量:${variant.signingConfig}"
+            println "versionName AndroidArtifactVariantImpl类的变量:${variant.versionName}"
+            println "versionCode AndroidArtifactVariantImpl类的变量:${variant.versionCode}"
+            println "name BaseVariantImpl类的变量:${variant.name}"
+            println "description BaseVariantImpl类的变量:${variant.description}"
+            println "dirName BaseVariantImpl类的变量:${variant.dirName}"
+            println "baseName BaseVariantImpl类的变量:${variant.baseName}"
+            println "flavorName BaseVariantImpl类的变量:${variant.flavorName}"
+            println "outputs BaseVariantImpl类的变量:${variant.outputs}"
+            println "buildTypeName BaseVariantImpl类的变量:${variant.buildType.name}"
+            variant.outputs.all{
+                println '---------outputs分割线-------------'
+                println "    it BaseVariantOutput类的变量:${it}"
+                println "    name BaseVariantOutput类的变量:${it.name}"
+                println "    baseName BaseVariantOutput类的变量:${it.baseName}"
+                println "    dirName BaseVariantOutput类的变量:${it.dirName}"
+                println "    outputFile OutputFile类的变量:${it.outputFile}"
+                it.outputFileName = "gradlePlugin_${variant.flavorName}_${variant.buildType.name}_${variant.versionCode}_${buildTime()}.apk"
+            }
+    }
+}
+
+def buildTime(){
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMdd')
+    return formattedDate
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation project(':lib')
+//    implementation "com.susiha.lib:androidlib:1.0.2"
+//    compileOnly 'com.android.tools.build:gradle:3.5.1'
+
+}

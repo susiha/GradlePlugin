@@ -1,0 +1,46 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
+
+
+sourceSets {
+    main{
+        java{
+
+        }
+
+    }
+
+    custom{
+        java{
+            srcDir 'src/java'
+        }
+    }
+}
+
+
+task showAllSourceSetTask{
+    sourceSets.all{
+        println "------------------"
+        println "当前目录是: ${name}"
+        println "output :${output}"
+        output.classesDirs.each{
+            println "output.classesDir :${it}"
+        }
+        println "output.resourcesDir:${output.resourcesDir}"
+        println "compileClasspath:${compileClasspath}"
+        println "java:${java}"
+        println "java.srcDirs:${java.srcDirs}"
+        println "resources:${resources}"
+        println "resources.srcDirs:${resources.srcDirs}"
+    }
+}
+
+dependencies {
+    customCompile 'com.squareup.okhttp3:okhttp:3.0.1'
+}
